@@ -1,0 +1,42 @@
+<div class="container bg-secondary bg-opacity-25 mt-4 pt-2">
+  <h2 style="color:blue">Añadir un producto</h2>
+  <form onsubmit="return sendProduct(this)">
+    <div class="mb-3">
+      <label for="name" class="form-label">Name: </label>
+      <input type="text" class="form-control" id="name" name="name" aria-describedby="name" required>
+    </div>
+    <div class="mb-3">
+      <label for="price" class="form-label">Price: </label>
+      <input type="number" class="form-control" id="price" name="price" aria-describedby="price" required>
+    </div>
+    <div class="mb-3">
+      <label for="thumbnail" class="form-label">Thumbnail: </label>
+      <input type="text" class="form-control" id="thumbnail" name="thumbnail" aria-describedby="thumbnail" required>
+    </div>
+    <button type="submit" class="btn btn-primary">Submit</button>
+  </form>
+
+  <hr>
+  
+  <div id="productList" class="d-none">
+    <h3 style="color:red">Lista de productos</h3>
+    <table class="table bg-dark">
+      <thead class="text-white">
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Name</th>
+          <th scope="col">Price</th>
+          <th scope="col">Thumbnail</th>
+        </tr>
+      </thead>
+      <tbody id="productTable" class="text-white">
+      </tbody>
+    </table>
+  </div>
+
+  <h3 style="color:red" id="notProducts">No hay productos</h3>
+  
+  <hr>
+</div>
+
+{{> chat}}
