@@ -4,11 +4,12 @@ import { Server } from "socket.io";
 import { engine } from "express-handlebars";
 import productTestRouter from "./routes/productos-test.js";
 import { connectToDb, dbDAO } from "./config/connectToDb.js";
+import { normalize, schema } from "normalizr";
 
 const app = express();
 const server = createServer(app);
 const io = new Server(server);
-const db = "mongo";
+const db = "archivo";
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -27,6 +28,16 @@ app.get("/", (req, res) => {
 
 io.on("connection", async (client) => {
   messages = await dbDAO.getMessages();
+
+  const author = new schema.Entity("author");
+
+  const message = new schema.Entity("message", {
+    author: author,
+  });
+
+  const normalizedData = normalize(messages, message);
+
+  console.log(JSON.stringify(normalizedData, null, 2));
 
   // Send all messages from messages array
   client.emit("messages", messages);

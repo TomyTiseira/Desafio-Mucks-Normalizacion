@@ -5,7 +5,6 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "initDb": "node ./model/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -17,6 +16,7 @@
     "express-handlebars": "^6.0.6",
     "firebase-admin": "^11.5.0",
     "mongoose": "^6.9.0",
+    "normalizr": "^3.6.2",
     "socket.io": "^4.5.4"
   }
 }
