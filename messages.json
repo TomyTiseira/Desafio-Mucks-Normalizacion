@@ -1,28 +1,31 @@
-[
-  {
-    "author": {
-      "id": "tomy@gmail.com",
-      "name": "Tomy",
-      "lastname": "Tiseira",
-      "age": "2",
-      "nickname": "2",
-      "avatar": "2"
+{
+  "id": "1",
+  "messages": [
+    {
+      "author": {
+        "email": "tomy@gmail.com",
+        "name": "Tomy",
+        "lastname": "Tiseira",
+        "age": "2",
+        "nickname": "2",
+        "avatar": "2"
+      },
+      "text": "2",
+      "date": "2/2/2023, 18:08:17",
+      "id": "0"
     },
-    "text": "2",
-    "date": "2/2/2023, 18:08:17",
-    "id": "0"
-  },
-  {
-    "author": {
-      "id": "tomy@gmail.com",
-      "name": "Tomy",
-      "lastname": "Tiseira",
-      "age": "34",
-      "nickname": "234",
-      "avatar": "234"
-    },
-    "text": "324",
-    "date": "2/2/2023, 18:11:46",
-    "id": "1"
-  }
-]
+    {
+      "author": {
+        "email": "Agua@gmail.com",
+        "name": "234",
+        "lastname": "324",
+        "age": "2",
+        "nickname": "2",
+        "avatar": "2"
+      },
+      "text": "2",
+      "date": "2/2/2023, 18:08:17",
+      "id": "1"
+    }
+  ]
+}

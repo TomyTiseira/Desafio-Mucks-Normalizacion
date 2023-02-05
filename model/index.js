@@ -4,7 +4,7 @@ const { Schema } = mongoose;
 
 const messagesSchema = new Schema({
   author: {
-    id: { type: String, require: true },
+    email: { type: String, require: true },
     name: { type: String, require: true },
     lastname: { type: String, require: true },
     age: { type: Number, require: true },

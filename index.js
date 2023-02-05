@@ -4,12 +4,12 @@ import { Server } from "socket.io";
 import { engine } from "express-handlebars";
 import productTestRouter from "./routes/productos-test.js";
 import { connectToDb, dbDAO } from "./config/connectToDb.js";
-import { normalize, schema } from "normalizr";
+import { normalizer } from "./utils/normalizr.js";
 
 const app = express();
 const server = createServer(app);
 const io = new Server(server);
-const db = "archivo";
+const db = "mongo";
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -20,27 +20,21 @@ app.set("view engine", "handlebars");
 app.set("views", "./views");
 
 // Messages array initialization.
-let messages = [];
+let messagesArray = [];
 
 app.get("/", (req, res) => {
   res.render("products");
 });
 
 io.on("connection", async (client) => {
-  messages = await dbDAO.getMessages();
+  messagesArray = (await dbDAO.getMessages()) || [];
 
-  const author = new schema.Entity("author");
+  const normalizedData = normalizer(messagesArray);
 
-  const message = new schema.Entity("message", {
-    author: author,
-  });
-
-  const normalizedData = normalize(messages, message);
-
-  console.log(JSON.stringify(normalizedData, null, 2));
+  // console.log(JSON.stringify(normalizedData, null, 2));
 
   // Send all messages from messages array
-  client.emit("messages", messages);
+  client.emit("messages", normalizedData);
 
   // Receive a message.
   client.on("new-message", async (message) => {
@@ -49,7 +43,7 @@ io.on("connection", async (client) => {
     try {
       // Add message in DataBase.
       await dbDAO.addMessage({ ...message, date });
-      messages.push({ ...message, date });
+      // messagesArray.push({ ...message, date });
     } catch (e) {
       console.log(e.message);
     }

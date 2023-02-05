@@ -7,7 +7,19 @@ class ContainerMongoDb {
     await message.save();
   };
 
-  getMessages = async () => await Message.find({});
+  getMessages = async () => {
+    const array = {
+      id: "1",
+      messages: [],
+    };
+
+    const messages = await Message.find({});
+
+    messages.forEach((message) => {
+      array.messages.push(message);
+    });
+    return array;
+  };
 }
 
 const containerMongoDb = new ContainerMongoDb();

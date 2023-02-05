@@ -1,3 +1,5 @@
+import { denormalizer } from "../utils/normalizr";
+
 const socket = io();
 let flag = false;
 
@@ -8,7 +10,7 @@ form.addEventListener("submit", (e) => {
 
   const message = {
     author: {
-      id: document.getElementById("email").value,
+      email: document.getElementById("email").value,
       name: document.getElementById("name").value,
       lastname: document.getElementById("lastname").value,
       age: document.getElementById("age").value,
@@ -23,6 +25,43 @@ form.addEventListener("submit", (e) => {
   console.log(message);
 
   socket.emit("new-message", message);
+});
+
+socket.on("messages", (data) => {
+  let html = "";
+
+  const messages = denormalizer(data);
+
+  console.log(data);
+
+  // messages.messages[0]._doc
+
+  data.forEach((message) => {
+    html += `
+    <p>
+      <b style="color: blue">${message.author.email}</b>
+      <span style="color: brown">[ ${message.date} ]</span> 
+      : 
+      <i style="color: green">${message.text}</i>
+    </p>
+    `;
+  });
+
+  document.getElementById("messages").innerHTML = html;
+});
+
+socket.on("message-added", (message) => {
+  let html = document.getElementById("messages").innerHTML;
+  html += `
+  <p>
+    <b style="color: blue">${message.author.id}</b>
+    <span style="color: brown">[ ${message.date} ]</span> 
+    : 
+    <i style="color: green">${message.text}</i>
+  </p>
+  `;
+
+  document.getElementById("messages").innerHTML = html;
 });
 
 socket.on("products", (data) => {
@@ -80,33 +119,3 @@ const sendProduct = (that) => {
 
   socket.emit("new-product", product);
 };
-
-socket.on("messages", (data) => {
-  let html = "";
-  data.forEach((message) => {
-    html += `
-    <p>
-      <b style="color: blue">${message.author.id}</b>
-      <span style="color: brown">[ ${message.date} ]</span> 
-      : 
-      <i style="color: green">${message.text}</i>
-    </p>
-    `;
-  });
-
-  document.getElementById("messages").innerHTML = html;
-});
-
-socket.on("message-added", (message) => {
-  let html = document.getElementById("messages").innerHTML;
-  html += `
-  <p>
-    <b style="color: blue">${message.author.id}</b>
-    <span style="color: brown">[ ${message.date} ]</span> 
-    : 
-    <i style="color: green">${message.text}</i>
-  </p>
-  `;
-
-  document.getElementById("messages").innerHTML = html;
-});
