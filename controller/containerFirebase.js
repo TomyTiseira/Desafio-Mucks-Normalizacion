@@ -15,10 +15,13 @@ class ContainerFirebase {
 
     const querySnapshot = await query.get();
 
-    const messages = [];
+    const messages = {
+      id: "1",
+      messages: [],
+    };
 
     querySnapshot.forEach((doc) => {
-      messages.push({
+      messages.messages.push({
         id: doc.data().id,
         author: doc.data().author,
         date: doc.data().date,

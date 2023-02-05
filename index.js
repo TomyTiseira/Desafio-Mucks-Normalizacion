@@ -9,7 +9,7 @@ import { normalizer } from "./utils/normalizr.js";
 const app = express();
 const server = createServer(app);
 const io = new Server(server);
-const db = "mongo";
+const db = "firebase";
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -20,18 +20,18 @@ app.set("view engine", "handlebars");
 app.set("views", "./views");
 
 // Messages array initialization.
-let messagesArray = [];
+// let messagesArray = [];
 
 app.get("/", (req, res) => {
   res.render("products");
 });
 
 io.on("connection", async (client) => {
-  messagesArray = (await dbDAO.getMessages()) || [];
+  const messagesArray = (await dbDAO.getMessages()) || [];
 
   const normalizedData = normalizer(messagesArray);
 
-  // console.log(JSON.stringify(normalizedData, null, 2));
+  console.log(JSON.stringify(normalizedData, null, 2));
 
   // Send all messages from messages array
   client.emit("messages", normalizedData);
@@ -43,7 +43,7 @@ io.on("connection", async (client) => {
     try {
       // Add message in DataBase.
       await dbDAO.addMessage({ ...message, date });
-      // messagesArray.push({ ...message, date });
+      messagesArray.messages.push({ ...message, date });
     } catch (e) {
       console.log(e.message);
     }

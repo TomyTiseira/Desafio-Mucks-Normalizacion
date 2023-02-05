@@ -1,4 +1,4 @@
-import { denormalizer } from "../utils/normalizr";
+import { denormalize, schema } from "normalizr";
 
 const socket = io();
 let flag = false;
@@ -30,9 +30,23 @@ form.addEventListener("submit", (e) => {
 socket.on("messages", (data) => {
   let html = "";
 
-  const messages = denormalizer(data);
+  // const messages = denormalizer(data);
 
-  console.log(data);
+  const author = new schema.Entity("author", {}, { idAttribute: "email" });
+
+  const message = new schema.Entity("message", {
+    author: author,
+  });
+
+  const messages = new schema.Entity("messages", {
+    messages: [message],
+  });
+
+  const denormalizedData = denormalize(data.result, messages, data.entities);
+
+  console.log(denormalizedData);
+
+  // console.log(data.message[0].author);
 
   // messages.messages[0]._doc
 
@@ -54,7 +68,7 @@ socket.on("message-added", (message) => {
   let html = document.getElementById("messages").innerHTML;
   html += `
   <p>
-    <b style="color: blue">${message.author.id}</b>
+    <b style="color: blue">${message.author.email}</b>
     <span style="color: brown">[ ${message.date} ]</span> 
     : 
     <i style="color: green">${message.text}</i>

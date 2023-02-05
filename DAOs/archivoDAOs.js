@@ -5,17 +5,22 @@ class ArchivoDAO {
     const messages = await this.getMessages();
 
     if (!messages) {
+      const messagesArray = {
+        id: "1",
+        messages: [],
+      };
+
+      messagesArray.messages.push({ ...messageToAdd, id: "0" });
       await containerArchivo.addMessage([
-        JSON.stringify([{ ...messageToAdd, id: "0" }], null, 2),
+        JSON.stringify(messagesArray, null, 2),
       ]);
       return;
     }
 
-    messageToAdd.id = messages.length.toString();
+    messageToAdd.id = messages.messages.length.toString();
+    messages.messages.push(messageToAdd);
 
-    await containerArchivo.addMessage(
-      JSON.stringify([...messages, messageToAdd], null, 2)
-    );
+    await containerArchivo.addMessage(JSON.stringify(messages, null, 2));
   };
 
   getMessages = async () => {

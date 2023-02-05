@@ -4,7 +4,8 @@ class FirebaseDAO {
   addMessage = async (messageToAdd) => {
     try {
       const messages = await this.getMessages();
-      const id = messages ? messages.length : 0;
+
+      const id = messages ? messages.messages.length : 0;
 
       await containerFirebase.addMessage({
         ...messageToAdd,
