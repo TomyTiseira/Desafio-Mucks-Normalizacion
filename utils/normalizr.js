@@ -11,18 +11,13 @@ const messages = new schema.Entity("messages", {
 });
 
 export const normalizer = (array) => {
-  // console.log(array);
   const normalizedData = normalize(array, messages);
 
   return normalizedData;
 };
-
-// console.log(JSON.stringify(normalizedData, null, 2));
 
 export const denormalizer = (array) => {
   const denormalizedData = denormalize(array.result, messages, array.entities);
 
   return denormalizedData;
 };
-
-// console.log(denormalizedData);

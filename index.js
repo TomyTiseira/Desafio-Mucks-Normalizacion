@@ -9,7 +9,6 @@ import { denormalizer, normalizer } from "./utils/normalizr.js";
 const app = express();
 const server = createServer(app);
 const io = new Server(server);
-const db = "mongo";
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
