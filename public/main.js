@@ -1,5 +1,3 @@
-import { denormalize, schema } from "normalizr";
-
 const socket = io();
 let flag = false;
 
@@ -22,114 +20,44 @@ form.addEventListener("submit", (e) => {
 
   document.getElementById("text").value = "";
 
-  console.log(message);
-
   socket.emit("new-message", message);
 });
 
 socket.on("messages", (data) => {
-  let html = "";
+  if (data) {
+    let html = "";
 
-  // const messages = denormalizer(data);
+    data.messages.forEach((message) => {
+      html += `
+      <div class="d-flex flex-row">
+        <p>
+          <b style="color: blue">${message.author.email}</b>
+          <span style="color: brown">[ ${message.date} ]</span> 
+          : 
+          <i style="color: green">${message.text}</i>
+        </p>
+        <img src=${message.author.avatar} alt=${message.author.name} width="50" height="50" class="ms-3">
+      </div>
+    `;
+    });
 
-  const author = new schema.Entity("author", {}, { idAttribute: "email" });
+    document.getElementById("messages").innerHTML = html;
+  }
+});
 
-  const message = new schema.Entity("message", {
-    author: author,
-  });
-
-  const messages = new schema.Entity("messages", {
-    messages: [message],
-  });
-
-  const denormalizedData = denormalize(data.result, messages, data.entities);
-
-  console.log(denormalizedData);
-
-  // console.log(data.message[0].author);
-
-  // messages.messages[0]._doc
-
-  data.forEach((message) => {
-    html += `
+socket.on("message-added", (message) => {
+  let html = document.getElementById("messages").innerHTML;
+  html += `
+  <div class="d-flex flex-row">
     <p>
       <b style="color: blue">${message.author.email}</b>
       <span style="color: brown">[ ${message.date} ]</span> 
       : 
       <i style="color: green">${message.text}</i>
     </p>
-    `;
-  });
-
-  document.getElementById("messages").innerHTML = html;
-});
-
-socket.on("message-added", (message) => {
-  let html = document.getElementById("messages").innerHTML;
-  html += `
-  <p>
-    <b style="color: blue">${message.author.email}</b>
-    <span style="color: brown">[ ${message.date} ]</span> 
-    : 
-    <i style="color: green">${message.text}</i>
-  </p>
+    <img src=${message.author.avatar} alt=${message.author.name} width="50" height="50" class="ms-3"/>
+  </div>
   `;
 
   document.getElementById("messages").innerHTML = html;
 });
-
-socket.on("products", (data) => {
-  if (data.length !== 0) {
-    const productList = document.getElementById("productList");
-    const notProducts = document.getElementById("notProducts");
-    productList.classList.remove("d-none");
-    notProducts.classList.add("d-none");
-    flag = true;
-  }
-  let html = "";
-  data.forEach((product) => {
-    html += `
-    <tr>
-      <th scope="row">${product.id}</th>
-      <td>${product.name}</td>
-      <td>$${product.price}</td>
-      <td><img src=${product.thumbnail} alt=${product.name}} style="height: 50px; width: 50px;"></td>
-    </tr>
-    `;
-  });
-  document.getElementById("productTable").innerHTML = html;
-});
-
-socket.on("product-added", (product) => {
-  if (!flag && product.id) {
-    const productList = document.getElementById("productList");
-    const notProducts = document.getElementById("notProducts");
-    productList.classList.remove("d-none");
-    notProducts.classList.add("d-none");
-    flag = true;
-  }
-
-  let html = document.getElementById("productTable").innerHTML;
-  html += `
-  <tr>
-    <th scope="row">${1}</th>
-    <td>${product.name}</td>
-    <td>$${product.price}</td>
-    <td><img src=${product.thumbnail} alt=${
-    product.name
-  }} style="height: 50px; width: 50px;"></td>
-  </tr>
-  `;
-
-  document.getElementById("productTable").innerHTML = html;
-});
-
-const sendProduct = (that) => {
-  const product = {
-    name: that.name.value,
-    price: that.price.value,
-    thumbnail: that.thumbnail.value,
-  };
-
-  socket.emit("new-product", product);
-};

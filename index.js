@@ -3,13 +3,13 @@ import { createServer } from "http";
 import { Server } from "socket.io";
 import { engine } from "express-handlebars";
 import productTestRouter from "./routes/productos-test.js";
-import { connectToDb, dbDAO } from "./config/connectToDb.js";
-import { normalizer } from "./utils/normalizr.js";
+import { dbDAO } from "./config/connectToDb.js";
+import { denormalizer, normalizer } from "./utils/normalizr.js";
 
 const app = express();
 const server = createServer(app);
 const io = new Server(server);
-const db = "firebase";
+const db = "mongo";
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -19,11 +19,8 @@ app.engine("handlebars", engine());
 app.set("view engine", "handlebars");
 app.set("views", "./views");
 
-// Messages array initialization.
-// let messagesArray = [];
-
 app.get("/", (req, res) => {
-  res.render("products");
+  res.render("chat");
 });
 
 io.on("connection", async (client) => {
@@ -31,10 +28,28 @@ io.on("connection", async (client) => {
 
   const normalizedData = normalizer(messagesArray);
 
-  console.log(JSON.stringify(normalizedData, null, 2));
+  // console.log(JSON.stringify(normalizedData, null, 2));
 
-  // Send all messages from messages array
-  client.emit("messages", normalizedData);
+  const denormalizedData = denormalizer(normalizedData);
+
+  // console.log(JSON.stringify(denormalizedData, null, 2));
+
+  if (denormalizedData?.messages[0]?._doc) {
+    let data = {
+      id: "1",
+      messages: [],
+    };
+
+    denormalizedData.messages.forEach((message) => {
+      data.messages.push(message._doc);
+    });
+
+    // Send all messages
+    client.emit("messages", data);
+  } else {
+    // Send all messages
+    client.emit("messages", denormalizedData);
+  }
 
   // Receive a message.
   client.on("new-message", async (message) => {
@@ -55,4 +70,4 @@ io.on("connection", async (client) => {
 
 app.use("/api/productos-test", productTestRouter);
 
-connectToDb(db).then(() => server.listen(8080));
+server.listen(8080);

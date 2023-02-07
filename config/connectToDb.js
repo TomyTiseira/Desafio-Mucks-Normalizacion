@@ -7,6 +7,7 @@ import ArchivoDAO from "../DAOs/archivoDAOs.js";
 
 let isConnected;
 let dbDAO;
+const db = "mongo";
 
 const connectToFirebase = () => {
   admin.initializeApp({
@@ -42,4 +43,5 @@ const connectToDb = async (db) => {
   return;
 };
 
-export { connectToDb, dbDAO };
+connectToDb(db);
+export { dbDAO };
